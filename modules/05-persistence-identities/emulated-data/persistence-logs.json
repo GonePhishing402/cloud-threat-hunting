@@ -1,0 +1,134 @@
+[
+  {
+    "_comment": "Attacker adds credentials to existing service principal",
+    "TimeGenerated": "2026-03-15T03:45:00Z",
+    "Type": "AuditLogs",
+    "OperationName": "Add service principal credentials",
+    "Category": "ApplicationManagement",
+    "Result": "success",
+    "InitiatedBy": {
+      "user": {
+        "userPrincipalName": "compromised-admin@contoso.com",
+        "ipAddress": "45.33.32.156"
+      }
+    },
+    "TargetResources": [
+      {
+        "displayName": "Contoso-Backup-Automation",
+        "id": "sp-guid-backdoor-001",
+        "type": "ServicePrincipal",
+        "modifiedProperties": [
+          {
+            "displayName": "KeyDescription",
+            "newValue": "[{\"KeyIdentifier\":\"key-001\",\"Type\":\"Password\",\"Usage\":\"Verify\",\"EndDate\":\"2028-03-15T00:00:00Z\"}]"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Attacker SP sign-in after credential addition",
+    "TimeGenerated": "2026-03-15T03:48:22Z",
+    "Type": "AADServicePrincipalSignInLogs",
+    "ServicePrincipalName": "Contoso-Backup-Automation",
+    "ServicePrincipalId": "sp-guid-backdoor-001",
+    "IPAddress": "45.33.32.156",
+    "ResourceDisplayName": "Microsoft Graph",
+    "ResultType": 0,
+    "Location": {"city": "Amsterdam", "countryOrRegion": "NL"}
+  },
+  {
+    "_comment": "Attacker adds federated identity credential",
+    "TimeGenerated": "2026-03-15T04:00:00Z",
+    "Type": "AuditLogs",
+    "OperationName": "Add federated identity credential",
+    "Category": "ApplicationManagement",
+    "Result": "success",
+    "InitiatedBy": {
+      "user": {
+        "userPrincipalName": "compromised-admin@contoso.com",
+        "ipAddress": "45.33.32.156"
+      }
+    },
+    "TargetResources": [
+      {
+        "displayName": "Contoso-CICD-Pipeline",
+        "id": "app-guid-cicd-001",
+        "type": "Application",
+        "modifiedProperties": [
+          {
+            "displayName": "FederatedIdentityCredentials",
+            "newValue": "[{\"issuer\":\"https://token.actions.githubusercontent.com\",\"subject\":\"repo:attacker-org/malicious-repo:ref:refs/heads/main\",\"audiences\":[\"api://AzureADTokenExchange\"]}]"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Attacker creates user-assigned managed identity",
+    "TimeGenerated": "2026-03-15T04:15:00Z",
+    "Type": "AzureActivity",
+    "Caller": "compromised-admin@contoso.com",
+    "CallerIpAddress": "45.33.32.156",
+    "OperationNameValue": "Microsoft.ManagedIdentity/userAssignedIdentities/write",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ResourceGroup": "rg-production",
+    "ResourceId": "/subscriptions/sub-guid-001/resourceGroups/rg-production/providers/Microsoft.ManagedIdentity/userAssignedIdentities/backup-processor-mi"
+  },
+  {
+    "_comment": "Attacker assigns elevated RBAC to managed identity",
+    "TimeGenerated": "2026-03-15T04:16:30Z",
+    "Type": "AzureActivity",
+    "Caller": "compromised-admin@contoso.com",
+    "CallerIpAddress": "45.33.32.156",
+    "OperationNameValue": "Microsoft.Authorization/roleAssignments/write",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ResourceGroup": "rg-production",
+    "Properties": {
+      "roleDefinitionId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "principalId": "mi-principal-backup-001",
+      "scope": "/subscriptions/sub-guid-001",
+      "_comment": "Contributor role at subscription scope"
+    }
+  },
+  {
+    "_comment": "Attacker adds high-privilege app role to SP",
+    "TimeGenerated": "2026-03-15T04:20:00Z",
+    "Type": "AuditLogs",
+    "OperationName": "Add app role assignment to service principal",
+    "Category": "ApplicationManagement",
+    "Result": "success",
+    "InitiatedBy": {
+      "user": {
+        "userPrincipalName": "compromised-admin@contoso.com",
+        "ipAddress": "45.33.32.156"
+      }
+    },
+    "TargetResources": [
+      {
+        "displayName": "Contoso-Backup-Automation",
+        "id": "sp-guid-backdoor-001",
+        "type": "ServicePrincipal",
+        "modifiedProperties": [
+          {
+            "displayName": "AppRole.Value",
+            "newValue": "\"RoleManagement.ReadWrite.Directory\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "SP used to read directory roles (post-escalation)",
+    "TimeGenerated": "2026-03-15T04:22:00Z",
+    "Type": "AADServicePrincipalSignInLogs",
+    "ServicePrincipalName": "Contoso-Backup-Automation",
+    "ServicePrincipalId": "sp-guid-backdoor-001",
+    "IPAddress": "45.33.32.156",
+    "ResourceDisplayName": "Microsoft Graph",
+    "ResultType": 0,
+    "Location": {"city": "Amsterdam", "countryOrRegion": "NL"}
+  }
+]

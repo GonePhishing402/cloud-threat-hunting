@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huntability Assessment — Cloud Threat Hunting</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-yellow: #d29922;
+            --accent-orange: #db6d28;
+            --accent-red: #f85149;
+            --border: #30363d;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .overall-score {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .overall-score .grade {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        .overall-score .score-value {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .category-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .category-card .module-tag {
+            display: inline-block;
+            background: var(--bg-secondary);
+            color: var(--accent-blue);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .checklist {
+            list-style: none;
+            margin: 0.5rem 0;
+        }
+
+        .checklist li {
+            padding: 0.4rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-green);
+        }
+
+        .checklist label {
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .checklist input:checked + label {
+            color: var(--text-primary);
+        }
+
+        .section-header {
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 1rem 0 0.5rem;
+            font-weight: 600;
+        }
+
+        .score-bar {
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .category-score {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+
+        .actions {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 0.5rem;
+        }
+
+        .btn:hover { opacity: 0.9; }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        #results { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Huntability Assessment</h1>
+            <p>Evaluate your Azure environment's readiness for cloud threat hunting</p>
+        </header>
+
+        <div id="assessment">
+            <div class="categories" id="categories-container">
+                <!-- Dynamically populated -->
+            </div>
+
+            <div class="actions">
+                <button class="btn" onclick="calculateScore()">Calculate Huntability Score</button>
+                <button class="btn btn-secondary" onclick="resetAssessment()">Reset</button>
+            </div>
+        </div>
+
+        <div id="results">
+            <div class="overall-score">
+                <div class="grade" id="overall-grade">—</div>
+                <div class="score-value" id="overall-score-value">0 / 100</div>
+                <p style="color: var(--text-secondary); margin-top: 0.5rem;" id="overall-description"></p>
+            </div>
+
+            <div class="categories" id="results-container">
+                <!-- Dynamically populated -->
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="exportResults()">Export Report</button>
+                <button class="btn btn-secondary" onclick="showAssessment()">Back to Assessment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scoringData = null;
+
+        async function loadScoringData() {
+            const response = await fetch('./src/data/scoring-rubric.json');
+            scoringData = await response.json();
+            renderAssessment();
+        }
+
+        function renderAssessment() {
+            const container = document.getElementById('categories-container');
+            container.innerHTML = '';
+
+            scoringData.categories.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <span class="module-tag">Module ${cat.module}</span>
+                    <h3>${cat.name}</h3>
+                    <div class="section-header">Log Sources</div>
+                    <ul class="checklist">
+                        ${cat.requiredLogs.map((log, i) => `
+                            <li>
+                                <input type="checkbox" id="log-${cat.id}-${i}" data-category="${cat.id}" data-type="log" data-weight="${log.weight}">
+                                <label for="log-${cat.id}-${i}">${log.table}</label>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <div class="section-header">Security Controls</div>
+                    <ul class="checklist">
+                        ${cat.requiredControls.map((ctrl, i) => `
+                            <li>
+                                <input type="checkbox" id="ctrl-${cat.id}-${i}" data-category="${cat.id}" data-type="control" data-weight="${ctrl.weight}">
+                                <label for="ctrl-${cat.id}-${i}">${ctrl.control}</label>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function calculateScore() {
+            const results = {};
+            let totalWeightedScore = 0;
+            let totalCategories = scoringData.categories.length;
+
+            scoringData.categories.forEach(cat => {
+                let logScore = 0, logTotal = 0;
+                let ctrlScore = 0, ctrlTotal = 0;
+
+                document.querySelectorAll(`[data-category="${cat.id}"][data-type="log"]`).forEach(cb => {
+                    const w = parseInt(cb.dataset.weight);
+                    logTotal += w;
+                    if (cb.checked) logScore += w;
+                });
+
+                document.querySelectorAll(`[data-category="${cat.id}"][data-type="control"]`).forEach(cb => {
+                    const w = parseInt(cb.dataset.weight);
+                    ctrlTotal += w;
+                    if (cb.checked) ctrlScore += w;
+                });
+
+                const logPct = logTotal > 0 ? (logScore / logTotal) * 100 : 0;
+                const ctrlPct = ctrlTotal > 0 ? (ctrlScore / ctrlTotal) * 100 : 0;
+                const combined = (logPct * scoringData.scoring.logCoverage.weight) + 
+                                 (ctrlPct * scoringData.scoring.controlCoverage.weight);
+
+                results[cat.id] = { name: cat.name, logPct, ctrlPct, combined };
+                totalWeightedScore += combined;
+            });
+
+            const overallScore = Math.round(totalWeightedScore / totalCategories);
+            const grade = getGrade(overallScore);
+
+            document.getElementById('overall-grade').textContent = grade.key;
+            document.getElementById('overall-grade').style.color = getGradeColor(grade.key);
+            document.getElementById('overall-score-value').textContent = `${overallScore} / 100`;
+            document.getElementById('overall-description').textContent = grade.value.description;
+
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = '';
+
+            Object.entries(results).forEach(([id, data]) => {
+                const grade = getGrade(Math.round(data.combined));
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <h3>${data.name}</h3>
+                    <div class="section-header">Log Coverage: ${Math.round(data.logPct)}%</div>
+                    <div class="score-bar"><div class="score-bar-fill" style="width: ${data.logPct}%; background: ${getScoreColor(data.logPct)}"></div></div>
+                    <div class="section-header">Control Coverage: ${Math.round(data.ctrlPct)}%</div>
+                    <div class="score-bar"><div class="score-bar-fill" style="width: ${data.ctrlPct}%; background: ${getScoreColor(data.ctrlPct)}"></div></div>
+                    <div class="category-score">Huntability: <strong style="color: ${getGradeColor(grade.key)}">${Math.round(data.combined)}%</strong></div>
+                `;
+                resultsContainer.appendChild(card);
+            });
+
+            document.getElementById('assessment').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function getGrade(score) {
+            const grades = Object.entries(scoringData.scoring.grades).sort((a, b) => b[1].min - a[1].min);
+            for (const [key, value] of grades) {
+                if (score >= value.min) return { key, value };
+            }
+            return { key: 'F', value: scoringData.scoring.grades.F };
+        }
+
+        function getGradeColor(grade) {
+            const colors = { A: '#3fb950', B: '#58a6ff', C: '#d29922', D: '#db6d28', F: '#f85149' };
+            return colors[grade] || '#8b949e';
+        }
+
+        function getScoreColor(pct) {
+            if (pct >= 90) return '#3fb950';
+            if (pct >= 75) return '#58a6ff';
+            if (pct >= 60) return '#d29922';
+            if (pct >= 40) return '#db6d28';
+            return '#f85149';
+        }
+
+        function resetAssessment() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            showAssessment();
+        }
+
+        function showAssessment() {
+            document.getElementById('assessment').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+        }
+
+        function exportResults() {
+            const grade = document.getElementById('overall-grade').textContent;
+            const score = document.getElementById('overall-score-value').textContent;
+            const desc = document.getElementById('overall-description').textContent;
+
+            let report = `HUNTABILITY ASSESSMENT REPORT\n${'='.repeat(40)}\n\n`;
+            report += `Overall Grade: ${grade}\nScore: ${score}\n${desc}\n\n`;
+            report += `${'='.repeat(40)}\nCategory Breakdown\n${'='.repeat(40)}\n\n`;
+
+            document.querySelectorAll('#results-container .category-card').forEach(card => {
+                report += card.textContent.trim().replace(/\s+/g, ' ') + '\n\n';
+            });
+
+            report += `\nGenerated: ${new Date().toISOString()}\n`;
+
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'huntability-report.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        loadScoringData();
+    </script>
+</body>
+</html>

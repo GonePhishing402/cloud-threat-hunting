@@ -1,0 +1,188 @@
+{
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json",
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# Cloud Threat Hunting Workbook\n\nInteractive hunting workbook aligned to the Cloud Threat Hunting VBD modules. Use the tabs below to investigate specific attack categories.\n\n**Instructions:** Select a time range and optionally scope to a specific user or resource to begin hunting."
+      },
+      "name": "header"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "name": "TimeRange",
+            "type": 4,
+            "description": "Time range for all queries",
+            "value": {
+              "durationMs": 604800000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {"durationMs": 3600000, "displayName": "Last 1 hour"},
+                {"durationMs": 86400000, "displayName": "Last 24 hours"},
+                {"durationMs": 604800000, "displayName": "Last 7 days"},
+                {"durationMs": 2592000000, "displayName": "Last 30 days"}
+              ]
+            }
+          },
+          {
+            "name": "UserFilter",
+            "type": 1,
+            "description": "Optional: Filter by UserPrincipalName",
+            "value": ""
+          },
+          {
+            "name": "IPFilter",
+            "type": 1,
+            "description": "Optional: Filter by IP address",
+            "value": ""
+          }
+        ]
+      },
+      "name": "parameters"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {"id": "tab-overview", "cellValue": "overview", "linkTarget": "parameter", "linkLabel": "Overview", "preText": "", "style": "link"},
+          {"id": "tab-phishing", "cellValue": "phishing", "linkTarget": "parameter", "linkLabel": "Phishing", "style": "link"},
+          {"id": "tab-tokens", "cellValue": "tokens", "linkTarget": "parameter", "linkLabel": "Token Abuse", "style": "link"},
+          {"id": "tab-logicapps", "cellValue": "logicapps", "linkTarget": "parameter", "linkLabel": "Logic Apps", "style": "link"},
+          {"id": "tab-storage", "cellValue": "storage", "linkTarget": "parameter", "linkLabel": "Storage & KV", "style": "link"},
+          {"id": "tab-persistence", "cellValue": "persistence", "linkTarget": "parameter", "linkLabel": "Persistence", "style": "link"},
+          {"id": "tab-logging", "cellValue": "logging", "linkTarget": "parameter", "linkLabel": "Log Coverage", "style": "link"}
+        ]
+      },
+      "name": "tabs"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "union withsource=TableName SigninLogs, AADNonInteractiveUserSignInLogs, AuditLogs, AzureActivity\n| where TimeGenerated {TimeRange}\n| summarize EventCount = count() by TableName, bin(TimeGenerated, 1h)\n| render timechart",
+        "size": 1,
+        "title": "Event Volume by Source (Overview)",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
+      },
+      "name": "overview-volume"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let ConsentGrants = AuditLogs\n| where TimeGenerated {TimeRange}\n| where OperationName == 'Consent to application'\n| extend AppName = tostring(TargetResources[0].displayName)\n| extend User = tostring(InitiatedBy.user.userPrincipalName)\n| project TimeGenerated, User, AppName, OperationName;\nlet DeviceCodeSignins = SigninLogs\n| where TimeGenerated {TimeRange}\n| where AuthenticationProtocol == 'deviceCode'\n| project TimeGenerated, User = UserPrincipalName, AppName = AppDisplayName, OperationName = 'Device Code Sign-in';\nlet AiTMIndicators = SigninLogs\n| where TimeGenerated {TimeRange}\n| where ResultType == 0\n| where AuthenticationRequirement == 'multiFactorAuthentication'\n| project TimeGenerated, User = UserPrincipalName, AppName = AppDisplayName, OperationName = 'MFA Sign-in (AiTM Check)';\nunion ConsentGrants, DeviceCodeSignins, AiTMIndicators\n| order by TimeGenerated desc",
+        "size": 0,
+        "title": "Phishing Indicators",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "phishing"
+      },
+      "name": "phishing-indicators"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AADNonInteractiveUserSignInLogs\n| where TimeGenerated {TimeRange}\n| where ResultType == 0\n| summarize \n    TokenUseCount = count(),\n    DistinctIPs = dcount(IPAddress),\n    DistinctResources = dcount(ResourceDisplayName),\n    IPs = make_set(IPAddress, 5)\n    by UserPrincipalName, bin(TimeGenerated, 1h)\n| where DistinctIPs > 2\n| order by DistinctIPs desc",
+        "size": 0,
+        "title": "Token Replay Indicators (Multi-IP Token Usage)",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "tokens"
+      },
+      "name": "token-abuse"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureActivity\n| where TimeGenerated {TimeRange}\n| where OperationNameValue has 'Microsoft.Logic/workflows'\n| summarize Operations = count() by OperationNameValue, Caller, bin(TimeGenerated, 1h)\n| order by Operations desc",
+        "size": 0,
+        "title": "Logic App Operations",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "logicapps"
+      },
+      "name": "logicapp-ops"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let StorageOps = AzureActivity\n| where TimeGenerated {TimeRange}\n| where OperationNameValue has 'Microsoft.Storage'\n| where OperationNameValue has 'listKeys'\n| project TimeGenerated, Source = 'Storage Key Listing', Caller, CallerIpAddress, Detail = OperationNameValue;\nlet KVOps = AzureDiagnostics\n| where TimeGenerated {TimeRange}\n| where ResourceProvider == 'MICROSOFT.KEYVAULT'\n| where OperationName in ('SecretGet', 'SecretList', 'KeyGet')\n| project TimeGenerated, Source = 'Key Vault Access', Caller = identity_claim_upn_s, CallerIpAddress = CallerIPAddress, Detail = OperationName;\nunion StorageOps, KVOps\n| order by TimeGenerated desc",
+        "size": 0,
+        "title": "Storage & Key Vault Sensitive Operations",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "storage"
+      },
+      "name": "storage-kv-ops"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AuditLogs\n| where TimeGenerated {TimeRange}\n| where OperationName has_any ('service principal credentials', 'federated identity credential', 'app role assignment')\n| extend Actor = tostring(InitiatedBy.user.userPrincipalName)\n| extend Target = tostring(TargetResources[0].displayName)\n| project TimeGenerated, OperationName, Actor, Target, Result\n| order by TimeGenerated desc",
+        "size": 0,
+        "title": "Persistence Indicators (SP/MI/Federation Changes)",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "persistence"
+      },
+      "name": "persistence-indicators"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let ExpectedTables = datatable(TableName:string, RequiredForModule:string) [\n  'SigninLogs', 'Modules 01, 02',\n  'AADNonInteractiveUserSignInLogs', 'Modules 01, 02, 05',\n  'AuditLogs', 'Modules 01, 05',\n  'AADServicePrincipalSignInLogs', 'Module 05',\n  'AzureActivity', 'Modules 03, 04, 05',\n  'StorageBlobLogs', 'Module 04',\n  'AzureDiagnostics', 'Modules 03, 04'\n];\nlet ActiveTables = union withsource=T *\n  | where TimeGenerated > ago(24h)\n  | summarize LastEvent = max(TimeGenerated), EventCount = count() by T;\nExpectedTables\n| join kind=leftouter (ActiveTables) on $left.TableName == $right.T\n| extend Status = iff(isnotempty(LastEvent), '✅ Active', '❌ No Data')\n| project TableName, RequiredForModule, Status, LastEvent, EventCount\n| order by Status asc, TableName asc",
+        "size": 0,
+        "title": "Log Coverage Assessment",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "logging"
+      },
+      "name": "log-coverage"
+    }
+  ],
+  "isLocked": false,
+  "fallbackResourceIds": []
+}

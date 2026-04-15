@@ -1,0 +1,88 @@
+{
+  "challenges": [
+    {
+      "name": "Consent Granted",
+      "category": "01-phishing",
+      "description": "An employee reported a suspicious email asking them to approve an application. Investigate the AuditLogs to find which application received an illicit consent grant.\n\nSubmit the application's display name as your flag.",
+      "value": 100,
+      "type": "standard",
+      "state": "visible",
+      "flag": "FLAG{PLACEHOLDER_APP_NAME}",
+      "tags": ["phishing", "illicit-consent", "easy"],
+      "hints": [
+        {
+          "content": "Look for AuditLogs where OperationName == 'Consent to application'. Check the TargetResources for the app name.",
+          "cost": 25
+        }
+      ]
+    },
+    {
+      "name": "The Proxy in the Middle",
+      "category": "01-phishing",
+      "description": "A user completed MFA successfully but their account was compromised. The attacker used an adversary-in-the-middle proxy to steal the session cookie.\n\nFind the sign-in where the session was replayed and submit the attacker's IP address as your flag.",
+      "value": 200,
+      "type": "standard",
+      "state": "visible",
+      "flag": "FLAG{PLACEHOLDER_IP}",
+      "tags": ["phishing", "aitm", "medium"],
+      "hints": [
+        {
+          "content": "Look for a successful MFA sign-in followed by token use from a different IP within a short time window. Compare the IP addresses.",
+          "cost": 50
+        },
+        {
+          "content": "Join SigninLogs (MFA event) with AADNonInteractiveUserSignInLogs (token replay) on UserPrincipalName and filter where IPs don't match.",
+          "cost": 75
+        }
+      ]
+    },
+    {
+      "name": "Enter the Code",
+      "category": "01-phishing",
+      "description": "An attacker used a device code phishing attack to compromise a user's account. The user doesn't normally use device code authentication.\n\n1. Find the device code sign-in event\n2. Trace the attacker's subsequent access\n\nSubmit the first Azure resource the attacker accessed after the device code authentication as your flag.",
+      "value": 200,
+      "type": "standard",
+      "state": "visible",
+      "flag": "FLAG{PLACEHOLDER_RESOURCE}",
+      "tags": ["phishing", "device-code", "medium"],
+      "hints": [
+        {
+          "content": "Filter SigninLogs for AuthenticationProtocol == 'deviceCode' and look for users who don't normally use this flow.",
+          "cost": 50
+        }
+      ]
+    },
+    {
+      "name": "Full Chain",
+      "category": "01-phishing",
+      "description": "Three different phishing attacks were launched against the organization in the past 7 days: illicit consent, AiTM, and device code phishing.\n\nReconstruct the timeline of all three attacks and submit the earliest timestamp (UTC) of the first attack as your flag.\n\nFormat: FLAG{YYYY-MM-DDTHH:MM:SSZ}",
+      "value": 300,
+      "type": "standard",
+      "state": "visible",
+      "flag": "FLAG{PLACEHOLDER_TIMESTAMP}",
+      "tags": ["phishing", "timeline", "hard"],
+      "hints": [
+        {
+          "content": "You need to query multiple tables: AuditLogs for consent, SigninLogs for AiTM and device code. Build a union of the earliest indicators from each attack type.",
+          "cost": 100
+        }
+      ]
+    },
+    {
+      "name": "Build the Detection",
+      "category": "01-phishing",
+      "description": "Write a Sentinel analytics rule (KQL query) that would detect ONE of the three phishing techniques covered in this module. The query must:\n\n1. Return results within 5 minutes of the attack occurring\n2. Include the UserPrincipalName and IPAddress in the output\n3. Have a false-positive rate below 5% (explain your tuning logic)\n\nSubmit the SHA256 hash of your KQL query (no whitespace) as your flag.\n\nNote: This is a manually graded challenge. Submit your query to the instructor for review.",
+      "value": 400,
+      "type": "manual",
+      "state": "visible",
+      "flag": "",
+      "tags": ["phishing", "detection-engineering", "hard"],
+      "hints": [
+        {
+          "content": "Focus on the technique with the clearest signal-to-noise ratio. Device code phishing often has the lowest false-positive rate because so few legitimate users use it.",
+          "cost": 50
+        }
+      ]
+    }
+  ]
+}

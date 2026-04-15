@@ -1,0 +1,160 @@
+[
+  {
+    "_comment": "Emulated illicit consent grant - AuditLog entry",
+    "TimeGenerated": "2026-03-10T14:23:17Z",
+    "OperationName": "Consent to application",
+    "Category": "ApplicationManagement",
+    "Result": "success",
+    "CorrelationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "InitiatedBy": {
+      "user": {
+        "userPrincipalName": "jsmith@contoso.com",
+        "id": "user-guid-001",
+        "ipAddress": "203.0.113.55"
+      }
+    },
+    "TargetResources": [
+      {
+        "displayName": "SecureDoc Viewer",
+        "id": "app-guid-malicious-001",
+        "type": "Application",
+        "modifiedProperties": [
+          {
+            "displayName": "ConsentContext.IsAdminConsent",
+            "oldValue": "[]",
+            "newValue": "[false]"
+          },
+          {
+            "displayName": "ConsentAction.Permissions",
+            "oldValue": "[]",
+            "newValue": "[{\"Scope\":\"Mail.Read Mail.ReadWrite Files.ReadWrite.All User.Read\"}]"
+          }
+        ]
+      }
+    ],
+    "AdditionalDetails": [
+      {
+        "key": "AppId",
+        "value": "malicious-app-id-001"
+      },
+      {
+        "key": "HomeTenantId",
+        "value": "external-tenant-id-attacker"
+      }
+    ]
+  },
+  {
+    "_comment": "Emulated AiTM - legitimate MFA sign-in (victim)",
+    "TimeGenerated": "2026-03-10T09:15:32Z",
+    "Type": "SigninLogs",
+    "UserPrincipalName": "ajohnson@contoso.com",
+    "IPAddress": "198.51.100.10",
+    "ResultType": 0,
+    "ResultDescription": "Success",
+    "AuthenticationRequirement": "multiFactorAuthentication",
+    "AuthenticationProtocol": "oAuth2",
+    "AppDisplayName": "Microsoft Office 365 Portal",
+    "ResourceDisplayName": "Microsoft Graph",
+    "UserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "DeviceDetail": {
+      "browser": "Chrome 120.0",
+      "operatingSystem": "Windows 10"
+    },
+    "LocationDetails": {
+      "city": "Chicago",
+      "state": "Illinois",
+      "countryOrRegion": "US"
+    },
+    "SessionId": "session-aitm-victim-001"
+  },
+  {
+    "_comment": "Emulated AiTM - session replay from attacker IP (same session)",
+    "TimeGenerated": "2026-03-10T09:17:45Z",
+    "Type": "AADNonInteractiveUserSignInLogs",
+    "UserPrincipalName": "ajohnson@contoso.com",
+    "IPAddress": "45.33.32.156",
+    "ResultType": 0,
+    "ResultDescription": "Success",
+    "AuthenticationProtocol": "oAuth2",
+    "AppDisplayName": "Microsoft Office 365 Portal",
+    "ResourceDisplayName": "Microsoft Graph",
+    "UserAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+    "DeviceDetail": {
+      "browser": "Chrome 120.0",
+      "operatingSystem": "Linux"
+    },
+    "LocationDetails": {
+      "city": "Amsterdam",
+      "state": "North Holland",
+      "countryOrRegion": "NL"
+    },
+    "SessionId": "session-aitm-victim-001"
+  },
+  {
+    "_comment": "Emulated Device Code Phishing - victim enters attacker's device code",
+    "TimeGenerated": "2026-03-11T16:42:08Z",
+    "Type": "SigninLogs",
+    "UserPrincipalName": "bwilliams@contoso.com",
+    "IPAddress": "104.248.50.87",
+    "ResultType": 0,
+    "ResultDescription": "Success",
+    "AuthenticationRequirement": "multiFactorAuthentication",
+    "AuthenticationProtocol": "deviceCode",
+    "AppDisplayName": "Microsoft Azure CLI",
+    "ResourceDisplayName": "Microsoft Graph",
+    "UserAgent": "python-requests/2.28.0",
+    "DeviceDetail": {
+      "browser": "",
+      "operatingSystem": ""
+    },
+    "LocationDetails": {
+      "city": "London",
+      "state": "England",
+      "countryOrRegion": "GB"
+    }
+  },
+  {
+    "_comment": "Emulated Device Code - attacker's subsequent access using stolen tokens",
+    "TimeGenerated": "2026-03-11T16:44:22Z",
+    "Type": "AADNonInteractiveUserSignInLogs",
+    "UserPrincipalName": "bwilliams@contoso.com",
+    "IPAddress": "104.248.50.87",
+    "ResultType": 0,
+    "ResultDescription": "Success",
+    "AuthenticationProtocol": "oAuth2",
+    "AppDisplayName": "Microsoft Azure CLI",
+    "ResourceDisplayName": "Azure Key Vault",
+    "UserAgent": "python-requests/2.28.0",
+    "DeviceDetail": {
+      "browser": "",
+      "operatingSystem": "Linux"
+    },
+    "LocationDetails": {
+      "city": "London",
+      "state": "England",
+      "countryOrRegion": "GB"
+    }
+  },
+  {
+    "_comment": "Emulated Device Code - attacker enumerates Azure resources",
+    "TimeGenerated": "2026-03-11T16:46:55Z",
+    "Type": "AADNonInteractiveUserSignInLogs",
+    "UserPrincipalName": "bwilliams@contoso.com",
+    "IPAddress": "104.248.50.87",
+    "ResultType": 0,
+    "ResultDescription": "Success",
+    "AuthenticationProtocol": "oAuth2",
+    "AppDisplayName": "Microsoft Azure CLI",
+    "ResourceDisplayName": "Azure Storage",
+    "UserAgent": "python-requests/2.28.0",
+    "DeviceDetail": {
+      "browser": "",
+      "operatingSystem": "Linux"
+    },
+    "LocationDetails": {
+      "city": "London",
+      "state": "England",
+      "countryOrRegion": "GB"
+    }
+  }
+]

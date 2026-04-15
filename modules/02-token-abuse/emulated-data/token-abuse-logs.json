@@ -1,0 +1,90 @@
+[
+  {
+    "_comment": "Token issuance - legitimate user sign-in from corporate IP",
+    "TimeGenerated": "2026-03-12T08:30:00Z",
+    "Type": "SigninLogs",
+    "UserPrincipalName": "mgarcia@contoso.com",
+    "IPAddress": "198.51.100.25",
+    "ResultType": 0,
+    "ResultDescription": "Success",
+    "AuthenticationRequirement": "multiFactorAuthentication",
+    "AuthenticationProtocol": "oAuth2",
+    "AppDisplayName": "Microsoft Azure CLI",
+    "ResourceDisplayName": "Azure Resource Manager",
+    "UserAgent": "python-requests/2.28.0 azsdk-python-identity/1.12.0",
+    "DeviceDetail": {"browser": "", "operatingSystem": "Windows 10"},
+    "LocationDetails": {"city": "Dallas", "state": "Texas", "countryOrRegion": "US"}
+  },
+  {
+    "_comment": "Token replay - attacker uses stolen token from different IP",
+    "TimeGenerated": "2026-03-12T08:33:15Z",
+    "Type": "AADNonInteractiveUserSignInLogs",
+    "UserPrincipalName": "mgarcia@contoso.com",
+    "IPAddress": "185.220.101.34",
+    "ResultType": 0,
+    "ResultDescription": "Success",
+    "AuthenticationProtocol": "oAuth2",
+    "AppDisplayName": "Microsoft Azure CLI",
+    "ResourceDisplayName": "Azure Resource Manager",
+    "UserAgent": "python-requests/2.28.0",
+    "DeviceDetail": {"browser": "", "operatingSystem": "Linux"},
+    "LocationDetails": {"city": "Bucharest", "state": "Bucharest", "countryOrRegion": "RO"}
+  },
+  {
+    "_comment": "Token replay - attacker enumerates subscriptions",
+    "TimeGenerated": "2026-03-12T08:34:02Z",
+    "Type": "AzureActivity",
+    "Caller": "mgarcia@contoso.com",
+    "CallerIpAddress": "185.220.101.34",
+    "OperationNameValue": "Microsoft.Resources/subscriptions/read",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ResourceGroup": "",
+    "SubscriptionId": "sub-guid-001"
+  },
+  {
+    "_comment": "Token replay - attacker lists resource groups",
+    "TimeGenerated": "2026-03-12T08:35:18Z",
+    "Type": "AzureActivity",
+    "Caller": "mgarcia@contoso.com",
+    "CallerIpAddress": "185.220.101.34",
+    "OperationNameValue": "Microsoft.Resources/subscriptions/resourceGroups/read",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ResourceGroup": "",
+    "SubscriptionId": "sub-guid-001"
+  },
+  {
+    "_comment": "Anomalous refresh token burst - attacker farming tokens for multiple resources",
+    "TimeGenerated": "2026-03-12T08:36:00Z",
+    "Type": "AADNonInteractiveUserSignInLogs",
+    "UserPrincipalName": "mgarcia@contoso.com",
+    "IPAddress": "185.220.101.34",
+    "ResultType": 0,
+    "AppDisplayName": "Microsoft Azure CLI",
+    "ResourceDisplayName": "Microsoft Graph",
+    "UserAgent": "python-requests/2.28.0"
+  },
+  {
+    "_comment": "Anomalous refresh - Key Vault access",
+    "TimeGenerated": "2026-03-12T08:36:22Z",
+    "Type": "AADNonInteractiveUserSignInLogs",
+    "UserPrincipalName": "mgarcia@contoso.com",
+    "IPAddress": "185.220.101.34",
+    "ResultType": 0,
+    "AppDisplayName": "Microsoft Azure CLI",
+    "ResourceDisplayName": "Azure Key Vault",
+    "UserAgent": "python-requests/2.28.0"
+  },
+  {
+    "_comment": "Anomalous refresh - Storage access",
+    "TimeGenerated": "2026-03-12T08:36:45Z",
+    "Type": "AADNonInteractiveUserSignInLogs",
+    "UserPrincipalName": "mgarcia@contoso.com",
+    "IPAddress": "185.220.101.34",
+    "ResultType": 0,
+    "AppDisplayName": "Microsoft Azure CLI",
+    "ResourceDisplayName": "Azure Storage",
+    "UserAgent": "python-requests/2.28.0"
+  }
+]
