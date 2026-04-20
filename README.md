@@ -20,12 +20,9 @@ A modular, hands-on threat hunting training built for the Azure stack. Customers
 | 01 | [Phishing](modules/01-phishing/) | Illicit consent grants, AiTM, device code phishing |
 | 02 | [Token Abuse](modules/02-token-abuse/) | OAuth/refresh token replay, PRT abuse, token extraction |
 | 03 | [Logic App Abuse](modules/03-logic-app-abuse/) | Exfiltration, privilege escalation via managed identities, persistence |
-| 04 | [Storage & Key Vault](modules/04-storage-keyvault/) | SAS token abuse, secret exfiltration, key extraction |
+| 04 | [Storage](modules/04-storage/) | Shared key abuse, SAS token misuse, blob data exfiltration |
 | 05 | [Persistence](modules/05-persistence-identities/) | Service principals, federated identity credentials, managed identities |
-| 06 | [Hardening Capstone](modules/06-hardening-capstone/) | Defense-in-depth synthesis, gap analysis, detection rule deployment |
-| 07 | [Logging Enablement](modules/07-logging-enablement/) | Diagnostic settings, workspace design, ingestion cost, retention |
-
-> **Delivery Note:** Module 07 (Logging Enablement) is delivered early in the engagement — it is a prerequisite for all hunting modules.
+| 08 | [Key Vault](modules/08-keyvault/) | Secret/key enumeration, policy abuse, suspicious access patterns |
 
 ## Deliverables
 
@@ -43,10 +40,9 @@ cloud-threat-hunting-vbd/
 │   ├── 01-phishing/
 │   ├── 02-token-abuse/
 │   ├── 03-logic-app-abuse/
-│   ├── 04-storage-keyvault/
+│   ├── 04-storage/
 │   ├── 05-persistence-identities/
-│   ├── 06-hardening-capstone/
-│   └── 07-logging-enablement/
+│   └── 08-keyvault/
 ├── sentinel-workbook/
 ├── huntability-app/
 ├── infrastructure/

@@ -54,22 +54,39 @@
       ]
     },
     {
-      "id": "storage-keyvault",
-      "name": "Storage & Key Vault Abuse",
+      "id": "storage",
+      "name": "Storage Abuse",
       "module": "04",
       "requiredLogs": [
-        {"table": "AzureActivity", "weight": 20, "description": "Management plane operations"},
-        {"table": "StorageBlobLogs", "weight": 30, "description": "Data plane access logs"},
-        {"table": "AzureDiagnostics_KeyVault", "weight": 30, "description": "Key Vault access audit"},
-        {"table": "AuditLogs", "weight": 20, "description": "RBAC changes on storage/KV"}
+        {"table": "AzureActivity", "weight": 25, "description": "Management plane operations"},
+        {"table": "StorageBlobLogs", "weight": 35, "description": "Blob data plane access logs"},
+        {"table": "StorageQueueLogs", "weight": 20, "description": "Queue data plane access logs"},
+        {"table": "StorageTableLogs", "weight": 20, "description": "Table service access logs"}
       ],
       "requiredControls": [
-        {"control": "Shared key access disabled on storage", "weight": 20},
-        {"control": "Private endpoints for storage", "weight": 15},
-        {"control": "Key Vault RBAC model (not access policies)", "weight": 20},
-        {"control": "Key Vault soft-delete and purge protection", "weight": 15},
-        {"control": "Key Vault private endpoints", "weight": 15},
-        {"control": "Automated secret rotation", "weight": 15}
+        {"control": "Shared key access disabled on storage", "weight": 25},
+        {"control": "Private endpoints for storage", "weight": 20},
+        {"control": "SAS expiration and scope governance", "weight": 20},
+        {"control": "Storage firewall with approved networks", "weight": 20},
+        {"control": "Storage diagnostic logging enabled", "weight": 15}
+      ]
+    },
+    {
+      "id": "keyvault",
+      "name": "Key Vault Abuse",
+      "module": "08",
+      "requiredLogs": [
+        {"table": "AZKVAuditLogs", "weight": 40, "description": "Key Vault audit events"},
+        {"table": "AzureDiagnostics", "weight": 25, "description": "Key Vault AuditEvent category"},
+        {"table": "AZKVPolicyEvaluationDetailsLogs", "weight": 15, "description": "Policy evaluation details"},
+        {"table": "AzureActivity", "weight": 20, "description": "Management plane operations"}
+      ],
+      "requiredControls": [
+        {"control": "Defender for Key Vault enabled", "weight": 20},
+        {"control": "Key Vault diagnostic logging enabled", "weight": 20},
+        {"control": "Key Vault private endpoint/network ACLs", "weight": 20},
+        {"control": "RBAC least privilege and separation of duties", "weight": 20},
+        {"control": "Soft-delete and purge protection enabled", "weight": 20}
       ]
     },
     {
