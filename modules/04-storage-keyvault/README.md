@@ -1,8 +1,8 @@
-# Module 04 — Storage and Key Vault Abuse in Azure
+# Module 04 — Storage Abuse in Azure
 
 ## Objective
 
-Hunt for unauthorized access to Azure Storage accounts and Key Vaults, including storage key extraction, SAS token abuse, and secret/key exfiltration. Students learn to correlate management plane and data plane logs to trace full attack chains.
+Hunt for unauthorized access to Azure Storage accounts, including storage key extraction, SAS token abuse, and data exfiltration. Students learn to correlate management plane and data plane logs to trace full attack chains.
 
 ## Duration
 
@@ -21,8 +21,7 @@ Hunt for unauthorized access to Azure Storage accounts and Key Vaults, including
 
 - `AzureActivity` — Management plane operations (key regeneration, policy changes)
 - `StorageBlobLogs` / `StorageQueueLogs` / `StorageTableLogs` — Data plane access logs
-- `AzureDiagnostics` (Key Vault) — Key Vault access logs (SecretGet, KeySign, etc.)
-- `AuditLogs` — RBAC changes on storage/KV resources
+- `AuditLogs` — Identity and permission changes that affect storage access
 
 ## Attack Narratives
 
@@ -53,21 +52,6 @@ Hunt for unauthorized access to Azure Storage accounts and Key Vaults, including
 - StorageBlobLogs showing `AuthenticationType == "SAS"` from external IPs
 - Unusual data transfer volumes using SAS-authenticated requests
 - SAS tokens with overly broad permissions or long expiry times
-
-### 3. Key Vault Secret Exfiltration
-
-**Attack Flow:**
-1. Attacker gains access to Key Vault via RBAC (Key Vault Secrets User/Officer)
-2. Enumerates and reads secrets (connection strings, API keys, certificates)
-3. Uses extracted credentials to pivot to other resources
-4. May also extract cryptographic keys for offline use
-
-**Key Indicators:**
-- `AzureDiagnostics` with `OperationName == "SecretGet"` for multiple secrets in rapid succession
-- Secret access from IPs not associated with expected applications
-- `SecretList` followed by multiple `SecretGet` operations (enumeration pattern)
-- Access to Key Vault from user accounts rather than service principals (unusual)
-- Key Vault access outside of deployment windows
 
 ## Hunt Playbooks
 
@@ -116,45 +100,15 @@ StorageBlobLogs
 | order by DataMB desc
 ```
 
-### Playbook 4: Key Vault Secret Enumeration
-```kql
-AzureDiagnostics
-| where TimeGenerated > ago(7d)
-| where ResourceProvider == "MICROSOFT.KEYVAULT"
-| where OperationName in ("SecretGet", "SecretList", "KeyGet", "KeyList", "CertificateGet")
-| where ResultType == "Success"
-| summarize 
-    OpCount = count(),
-    Operations = make_set(OperationName),
-    DistinctSecrets = dcount(id_s),
-    Secrets = make_set(id_s, 20)
-    by CallerIPAddress, identity_claim_upn_s, bin(TimeGenerated, 15m)
-| where OpCount > 5 or DistinctSecrets > 3
-| order by OpCount desc
-```
-
-### Playbook 5: Key Vault Access from User Accounts (vs. Service Principals)
-```kql
-AzureDiagnostics
-| where TimeGenerated > ago(7d)
-| where ResourceProvider == "MICROSOFT.KEYVAULT"
-| where OperationName has "Secret" or OperationName has "Key"
-| where ResultType == "Success"
-| where isnotempty(identity_claim_upn_s)
-| project TimeGenerated, UserPrincipalName = identity_claim_upn_s, 
-    OperationName, CallerIPAddress, SecretName = id_s, KeyVault = Resource
-| order by TimeGenerated desc
-```
-
 ## CTFd Challenges
 
 | # | Title | Difficulty | Description |
 |---|---|---|---|
 | 1 | Key Collector | Easy | Identify who listed storage account keys from a non-corporate IP |
 | 2 | SAS Leak | Medium | Find the SAS-authenticated blob access from an external IP and calculate total data exfiltrated |
-| 3 | Vault Raider | Medium | Detect the Key Vault enumeration attack and identify all secrets accessed |
-| 4 | The Pivot | Hard | Trace how a stolen Key Vault secret was used to access another Azure resource |
-| 5 | Data Heist | Hard | Reconstruct the full storage exfiltration: key listing → SAS generation → data download |
+| 3 | Blob Recon | Medium | Detect suspicious blob/container enumeration before exfiltration |
+| 4 | Token Trail | Hard | Trace the full path of a suspicious SAS token from creation to data access |
+| 5 | Data Heist | Hard | Reconstruct the full storage exfiltration: key listing -> SAS generation -> data download |
 
 ## Hardening
 
@@ -166,11 +120,4 @@ AzureDiagnostics
 - **Enable logging**: StorageBlobLogs, StorageQueueLogs to Log Analytics workspace
 - **Key rotation**: Automate key rotation; alert on manual `listKeys` operations
 
-### Key Vault
-- **Migrate from Access Policies to RBAC**: More granular, auditable control
-- **Private endpoints**: Restrict Key Vault access to VNet
-- **Soft-delete + purge protection**: Prevent permanent secret deletion
-- **Secret rotation**: Automate rotation for all secrets; alert on manual access
-- **Diagnostic logging**: Enable all Key Vault diagnostic categories to Log Analytics
-- **Network ACLs**: Restrict to specific VNets and trusted Azure services
-- **Separation of duties**: Users who deploy shouldn't have runtime secret access
+> Key Vault content moved to Module 08 (`modules/08-keyvault`).
