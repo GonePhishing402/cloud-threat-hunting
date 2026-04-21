@@ -1,6 +1,7 @@
 # Module 02 — Token Abuse CTF Challenges
 
-> **Data source:** `modules/02-token-abuse/emulated-data/token-abuse-logs.json` loaded into your Sentinel workspace.  
+> **Lab setup:** See [lab-setup.md](lab-setup.md) for instructions on creating a free ADX cluster and ingesting the emulated data.  
+> **Data source:** `modules/02-token-abuse/emulated-data/` — one JSON file per table (ingest each into its matching ADX table per the setup guide).  
 > **Tables used:** `SigninLogs`, `AADNonInteractiveUserSignInLogs`, `AzureActivity`, `MicrosoftGraphActivityLogs`, `CloudAppEvents`  
 > **Total points available:** 2,050
 
