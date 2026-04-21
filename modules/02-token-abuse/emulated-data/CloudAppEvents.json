@@ -1,0 +1,151 @@
+[
+  {
+    "_comment": "S2-06 | CloudAppEvents | Attacker reads mailbox – MailItemsAccessed audit event shows bulk sync of Inbox and Sent Items (42 items)",
+    "TimeGenerated": "2026-04-01T17:03:08Z",
+    "Type": "CloudAppEvents",
+    "TenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "AccountObjectId": "f4a2c893-71b5-4e38-d901-c3f7e8a25b61",
+    "AccountDisplayName": "alex.nguyen",
+    "AccountUpn": "alex.nguyen@celestialtrident-enc2.mscyberlab.com",
+    "ActionType": "MailItemsAccessed",
+    "Application": "Microsoft Exchange Online",
+    "ApplicationId": 20893,
+    "IPAddress": "20.124.65.190",
+    "IsAdminOperation": false,
+    "ObjectName": "Inbox",
+    "ObjectType": "MailFolder",
+    "ActivityType": "Access",
+    "UserAgent": "Client=REST;Action=SyncFolderItems;",
+    "CountryCode": "US",
+    "City": "Boydton",
+    "ISP": "Microsoft Corporation",
+    "ReportId": "4d7e8f9a-b0c1-4d7e-8f9a-b0c100d2e300",
+    "RawEventData": {
+      "ClientInfoString": "Client=REST;Action=SyncFolderItems;",
+      "MailboxOwnerUPN": "alex.nguyen@celestialtrident-enc2.mscyberlab.com",
+      "OperationCount": 42,
+      "Folders": [
+        {
+          "Path": "\\Inbox"
+        },
+        {
+          "Path": "\\Sent Items"
+        }
+      ]
+    }
+  },
+  {
+    "_comment": "S2-07 | CloudAppEvents | Attacker searches Exchange for sensitive keywords – 'salary review confidential' returns 7 results",
+    "TimeGenerated": "2026-04-01T17:04:30Z",
+    "Type": "CloudAppEvents",
+    "TenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "AccountObjectId": "f4a2c893-71b5-4e38-d901-c3f7e8a25b61",
+    "AccountDisplayName": "alex.nguyen",
+    "AccountUpn": "alex.nguyen@celestialtrident-enc2.mscyberlab.com",
+    "ActionType": "SearchQueryInitiatedExchange",
+    "Application": "Microsoft Exchange Online",
+    "ApplicationId": 20893,
+    "IPAddress": "20.124.65.190",
+    "IsAdminOperation": false,
+    "ObjectName": "SearchQuery",
+    "ObjectType": "SearchQuery",
+    "ActivityType": "Search",
+    "UserAgent": "Client=REST;Action=FindItem;",
+    "CountryCode": "US",
+    "City": "Boydton",
+    "ISP": "Microsoft Corporation",
+    "ReportId": "5e8f9a0b-c1d2-5e8f-9a0b-c1d200e3f400",
+    "RawEventData": {
+      "QueryText": "salary review confidential",
+      "QueryScope": "AllMailboxItems",
+      "ResultCount": 7
+    }
+  },
+  {
+    "_comment": "S2-08 | CloudAppEvents | Attacker opens specific high-value email – Q2 compensation review with sensitive HR data",
+    "TimeGenerated": "2026-04-01T17:05:22Z",
+    "Type": "CloudAppEvents",
+    "TenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "AccountObjectId": "f4a2c893-71b5-4e38-d901-c3f7e8a25b61",
+    "AccountDisplayName": "alex.nguyen",
+    "AccountUpn": "alex.nguyen@celestialtrident-enc2.mscyberlab.com",
+    "ActionType": "MailItemsAccessed",
+    "Application": "Microsoft Exchange Online",
+    "ApplicationId": 20893,
+    "IPAddress": "20.124.65.190",
+    "IsAdminOperation": false,
+    "ObjectName": "RE: Q2 Compensation Review - CONFIDENTIAL",
+    "ObjectType": "Message",
+    "ActivityType": "Access",
+    "UserAgent": "Client=REST;Action=GetItem;",
+    "CountryCode": "US",
+    "City": "Boydton",
+    "ISP": "Microsoft Corporation",
+    "ReportId": "6f9a0b1c-d2e3-6f9a-0b1c-d2e300f40500",
+    "RawEventData": {
+      "ClientInfoString": "Client=REST;Action=GetItem;",
+      "MailboxOwnerUPN": "alex.nguyen@celestialtrident-enc2.mscyberlab.com",
+      "InternetMessageId": "<CAFz3c7kXQv9-mBpT2HwY3@mail.celestialtrident-enc2.mscyberlab.com>",
+      "Folders": [
+        {
+          "Path": "\\Inbox"
+        }
+      ]
+    }
+  },
+  {
+    "_comment": "S2-09 | CloudAppEvents | Attacker views SharePoint HR Documents site to locate downloadable files",
+    "TimeGenerated": "2026-04-01T17:07:00Z",
+    "Type": "CloudAppEvents",
+    "TenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "AccountObjectId": "f4a2c893-71b5-4e38-d901-c3f7e8a25b61",
+    "AccountDisplayName": "alex.nguyen",
+    "AccountUpn": "alex.nguyen@celestialtrident-enc2.mscyberlab.com",
+    "ActionType": "PageViewed",
+    "Application": "Microsoft SharePoint Online",
+    "ApplicationId": 20892,
+    "IPAddress": "20.124.65.190",
+    "IsAdminOperation": false,
+    "ObjectName": "HR Documents",
+    "ObjectType": "SiteCollection",
+    "ActivityType": "Access",
+    "UserAgent": "python-requests/2.31.0",
+    "CountryCode": "US",
+    "City": "Boydton",
+    "ISP": "Microsoft Corporation",
+    "ReportId": "9c2d3e4f-a5b6-9c2d-3e4f-a5b600617200",
+    "RawEventData": {
+      "SiteUrl": "https://celestialtrident-enc2.sharepoint.com/sites/HRDocuments",
+      "SourceFileName": "",
+      "SourceFileExtension": ""
+    }
+  },
+  {
+    "_comment": "S2-10 | CloudAppEvents | Attacker downloads sensitive compensation spreadsheet from SharePoint – this is the primary data exfiltration event",
+    "TimeGenerated": "2026-04-01T17:08:02Z",
+    "Type": "CloudAppEvents",
+    "TenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "AccountObjectId": "f4a2c893-71b5-4e38-d901-c3f7e8a25b61",
+    "AccountDisplayName": "alex.nguyen",
+    "AccountUpn": "alex.nguyen@celestialtrident-enc2.mscyberlab.com",
+    "ActionType": "FileDownloaded",
+    "Application": "Microsoft SharePoint Online",
+    "ApplicationId": 20892,
+    "IPAddress": "20.124.65.190",
+    "IsAdminOperation": false,
+    "ObjectName": "2026_Compensation_Plan_ALL_EMPLOYEES.xlsx",
+    "ObjectType": "File",
+    "ActivityType": "Download",
+    "UserAgent": "python-requests/2.31.0",
+    "CountryCode": "US",
+    "City": "Boydton",
+    "ISP": "Microsoft Corporation",
+    "ReportId": "0d3e4f5a-b6c7-0d3e-4f5a-b6c700728300",
+    "RawEventData": {
+      "SiteUrl": "https://celestialtrident-enc2.sharepoint.com/sites/HRDocuments",
+      "SourceFileName": "2026_Compensation_Plan_ALL_EMPLOYEES.xlsx",
+      "SourceFileExtension": "xlsx",
+      "DestinationFileExtension": "xlsx"
+    }
+  }
+]

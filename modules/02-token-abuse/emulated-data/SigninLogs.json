@@ -1,0 +1,100 @@
+[
+  {
+    "_comment": "S1-01 | SigninLogs | Legitimate interactive sign-in – mgarcia authenticates with MFA from corporate workstation",
+    "TimeGenerated": "2026-03-12T08:28:44Z",
+    "Type": "SigninLogs",
+    "TenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "UserPrincipalName": "mgarcia@contoso.com",
+    "UserDisplayName": "Maria Garcia",
+    "UserId": "b91c3fa2-e048-4a27-9c31-6d5e7f8a4b02",
+    "AppDisplayName": "Microsoft Azure CLI",
+    "AppId": "04b07795-8ddb-461a-bbee-02f9e1bf7b46",
+    "ResourceDisplayName": "Azure Resource Manager",
+    "ResourceIdentity": "797f4846-ba00-4fd7-ba43-dac1f8f63013",
+    "IPAddress": "198.51.100.25",
+    "IsInteractive": true,
+    "ResultType": 0,
+    "ResultDescription": "Success",
+    "AuthenticationRequirement": "multiFactorAuthentication",
+    "AuthenticationProtocol": "oAuth2",
+    "ClientAppUsed": "Mobile Apps and Desktop clients",
+    "UserAgent": "python-requests/2.28.0 azsdk-python-identity/1.12.0 azure-cli/2.53.1",
+    "DeviceDetail": {
+      "deviceId": "c4f2a891-3d7e-4b0f-8a2c-5e9d1f7c3b84",
+      "displayName": "CORP-LAP-088",
+      "operatingSystem": "Windows 10",
+      "browser": "azure-cli",
+      "isCompliant": true,
+      "isManaged": true,
+      "trustType": "Hybrid Azure AD joined"
+    },
+    "LocationDetails": {
+      "city": "Dallas",
+      "state": "Texas",
+      "countryOrRegion": "US",
+      "geoCoordinates": {
+        "latitude": 32.7767,
+        "longitude": -96.797
+      }
+    },
+    "ConditionalAccessStatus": "success",
+    "MfaDetail": {
+      "authMethod": "Phone app notification",
+      "authDetail": "MFA completed in Microsoft authenticator app"
+    },
+    "SessionId": "d9e0f1a2-b3c4-4d5e-6f7a-8b9c0d1e2f3a",
+    "CorrelationId": "a0b1c2d3-e4f5-0a1b-2c3d-4e5f6a7b8c9d"
+  },
+  {
+    "_comment": "S2-01 | SigninLogs | Legitimate interactive sign-in – alex.nguyen completes MFA from corporate workstation CORP-WIN11-047",
+    "TimeGenerated": "2026-04-01T16:45:12Z",
+    "Type": "SigninLogs",
+    "TenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "AADTenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "HomeTenantId": "3e9d185f-64d5-41a2-889b-fb9aac476c1b",
+    "UserPrincipalName": "alex.nguyen@celestialtrident-enc2.mscyberlab.com",
+    "UserDisplayName": "alex.nguyen",
+    "UserId": "f4a2c893-71b5-4e38-d901-c3f7e8a25b61",
+    "UserType": "Member",
+    "AppDisplayName": "Microsoft Outlook",
+    "AppId": "5d661950-3475-41cd-a2c3-d671a3162bc1",
+    "AppOwnerTenantId": "f8cdef31-a31e-4b4a-93e4-5f571e91255a",
+    "ResourceDisplayName": "Office 365 Exchange Online",
+    "ResourceIdentity": "00000002-0000-0ff1-ce00-000000000000",
+    "ResourceServicePrincipalId": "883d9763-ae3b-4a5a-b04d-97501e8649b0",
+    "ResourceTenantId": "3e9d185f-64d5-41a2-889b-fb9aac476c1b",
+    "IPAddress": "72.21.210.29",
+    "IsInteractive": true,
+    "ResultType": 0,
+    "ResultDescription": "Success",
+    "AuthenticationRequirement": "multiFactorAuthentication",
+    "AuthenticationProtocol": "oAuth2",
+    "ClientAppUsed": "Browser",
+    "UserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "DeviceDetail": {
+      "deviceId": "a3f92c11-4b2e-4d8f-9c1a-7e3b5d0f2a84",
+      "displayName": "CORP-WIN11-047",
+      "operatingSystem": "Windows11",
+      "browser": "Chrome 124.0.0.0",
+      "isCompliant": true,
+      "isManaged": true,
+      "trustType": "Hybrid Azure AD joined"
+    },
+    "LocationDetails": {
+      "city": "Seattle",
+      "state": "Washington",
+      "countryOrRegion": "US",
+      "geoCoordinates": {
+        "latitude": 47.6062,
+        "longitude": -122.3321
+      }
+    },
+    "ConditionalAccessStatus": "success",
+    "MfaDetail": {
+      "authMethod": "Phone app notification",
+      "authDetail": "MFA completed in Microsoft authenticator app"
+    },
+    "SessionId": "3b8f1c2a-9e47-4d0b-a5c6-8f2e7d1b4a93",
+    "CorrelationId": "a1b2c3d4-e5f6-1a2b-3c4d-5e6f7a8b9c0d"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "_comment": "S1-03 | AzureActivity | Attacker enumerates Azure subscriptions using replayed token",
+    "TimeGenerated": "2026-03-12T08:34:02Z",
+    "Type": "AzureActivity",
+    "TenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "Caller": "mgarcia@contoso.com",
+    "CallerIpAddress": "185.220.101.34",
+    "OperationName": "Microsoft.Resources/subscriptions/read",
+    "OperationNameValue": "MICROSOFT.RESOURCES/SUBSCRIPTIONS/READ",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ActivityStatus": "Succeeded",
+    "ResourceGroup": "",
+    "SubscriptionId": "a7b3c1d9-4e2f-4a8b-9c0d-1e3f5a7b9c0d",
+    "Level": "Informational"
+  },
+  {
+    "_comment": "S1-04 | AzureActivity | Attacker lists resource groups to identify targets",
+    "TimeGenerated": "2026-03-12T08:35:18Z",
+    "Type": "AzureActivity",
+    "TenantId": "e9bf4da9-16d9-4838-aa16-632c8b118df5",
+    "Caller": "mgarcia@contoso.com",
+    "CallerIpAddress": "185.220.101.34",
+    "OperationName": "Microsoft.Resources/subscriptions/resourceGroups/read",
+    "OperationNameValue": "MICROSOFT.RESOURCES/SUBSCRIPTIONS/RESOURCEGROUPS/READ",
+    "CategoryValue": "Administrative",
+    "ActivityStatusValue": "Success",
+    "ActivityStatus": "Succeeded",
+    "ResourceGroup": "",
+    "SubscriptionId": "a7b3c1d9-4e2f-4a8b-9c0d-1e3f5a7b9c0d",
+    "Level": "Informational"
+  }
+]
