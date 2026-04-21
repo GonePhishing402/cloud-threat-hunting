@@ -7,10 +7,49 @@ A modular, hands-on threat hunting training built for the Azure stack. Students 
 | Aspect | Detail |
 |---|---|
 | **Delivery Format** | Instructor-led, hands-on labs with CTF challenges |
-| **Duration** | 3-day (core) or 5-day (full curriculum + capstone) |
+| **Duration** | 2 days (core) + optional Day 3 (environment hardening) |
 | **Platform** | Microsoft Sentinel, Log Analytics, Azure Monitor |
 | **Audience** | SOC analysts, threat hunters, cloud security engineers |
 | **Prerequisites** | Basic KQL, Azure portal familiarity |
+
+### Day 1
+
+| Time | Activity |
+|---|---|
+| Morning | **Module 00** — Threat Hunt Methodology: hunt loop, KQL foundations, table footprinting, correlation fields |
+| Late Morning | **Module 00 CTF** |
+| Midday | **Module 01** — Phishing: illicit consent grants, AiTM, device code phishing |
+| Early Afternoon | **Module 01 CTF** |
+| Mid Afternoon | **Module 02** — Token Abuse: FOCI token farming, PRT theft, OAuth refresh token replay |
+| Late Afternoon | **Module 02 CTF** |
+| End of Day | **Module 03** — Logic App Abuse: RBAC workflow edits, trigger URL harvest, managed identity exfiltration |
+| Wrap-up | **Module 03 CTF** |
+
+### Day 2
+
+| Time | Activity |
+|---|---|
+| Morning | **Module 04** — Storage Abuse: storage key extraction, SAS token abuse, data plane log correlation |
+| Late Morning | **Module 04 CTF** |
+| Midday | **Module 05** — Persistence via Identities: PFX escalation, backdoor service principals, managed identity abuse |
+| Early Afternoon | **Module 05 CTF** |
+| Mid Afternoon | **Module 06** — Key Vault Abuse: secret enumeration, RBAC policy manipulation, data vs. control plane detection |
+| Late Afternoon | **Module 06 CTF** |
+| End of Day | **Module 07 / 08** — Container Apps & Azure Web Apps: RBAC abuse, web shell deployment, managed identity pivot |
+| Wrap-up | **Module 07/08 CTF** |
+
+### Day 3 (Optional) — Environment Hardening & Logging Enablement
+
+An optional third day focused on deploying the course tooling into the customer's own Azure environment and remediating gaps found during the hunt exercises.
+
+| Time | Activity |
+|---|---|
+| Morning | Deploy the **Huntability App** — score the environment's current hunt readiness across all attack categories covered in Days 1–2 |
+| Late Morning | Review Huntability output — identify logging gaps (missing diagnostic settings, unconfigured data connectors, tables with no retention) |
+| Midday | Enable logging coverage — configure diagnostic settings, connect data connectors, validate table ingestion |
+| Early Afternoon | Deploy the **Sentinel Threat Hunting Workbook** — validate workbook queries populate with live data |
+| Mid Afternoon | Re-run Huntability to confirm coverage improvements; document residual gaps and remediation owners |
+| Late Afternoon | Debrief — review findings, prioritize remaining hardening work, hand off action items |
 
 ## Modules
 
