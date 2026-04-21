@@ -17,7 +17,7 @@ A modular, hands-on threat hunting training built for the Azure stack. Students 
 | Time | Activity |
 |---|---|
 | Morning | **Module 00** — Threat Hunt Methodology: hunt loop, KQL foundations, table footprinting, correlation fields |
-| Late Morning | **Module 00 CTF** |
+| Late Morning | **Module 00 DEMO** |
 | Midday | **Module 01** — Phishing: illicit consent grants, AiTM, device code phishing |
 | Early Afternoon | **Module 01 CTF** |
 | Mid Afternoon | **Module 02** — Token Abuse: FOCI token farming, PRT theft, OAuth refresh token replay |
