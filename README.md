@@ -1,12 +1,12 @@
-# Cloud Threat Hunting VBD — Azure / Microsoft Sentinel
+# Cloud Threat Hunting — Azure / Microsoft Sentinel
 
-A modular, hands-on threat hunting training built for the Azure stack. Customers learn to detect, investigate, and harden against real-world cloud attack techniques using Microsoft Sentinel and emulated log data.
+A modular, hands-on threat hunting training built for the Azure stack. Students learn to detect, investigate, and harden against real-world cloud attack techniques using Microsoft Sentinel and emulated log data.
 
 ## Offering Summary
 
 | Aspect | Detail |
 |---|---|
-| **Delivery Format** | Instructor-led, hands-on labs with CTFd challenges |
+| **Delivery Format** | Instructor-led, hands-on labs with CTF challenges |
 | **Duration** | 3-day (core) or 5-day (full curriculum + capstone) |
 | **Platform** | Microsoft Sentinel, Log Analytics, Azure Static Web Apps |
 | **Audience** | SOC analysts, threat hunters, cloud security engineers |
@@ -18,35 +18,79 @@ A modular, hands-on threat hunting training built for the Azure stack. Customers
 |---|---|---|
 | 00 | [Threat Hunt Methodology](modules/00-methodology/) | Hunt loop, MITRE ATT&CK Cloud, cloud-specific considerations |
 | 01 | [Phishing](modules/01-phishing/) | Illicit consent grants, AiTM, device code phishing |
-| 02 | [Token Abuse](modules/02-token-abuse/) | OAuth/refresh token replay, PRT abuse, token extraction |
-| 03 | [Logic App Abuse](modules/03-logic-app-abuse/) | Exfiltration, privilege escalation via managed identities, persistence |
-| 04 | [Storage](modules/04-storage/) | Shared key abuse, SAS token misuse, blob data exfiltration |
-| 05 | [Persistence](modules/05-persistence-identities/) | Service principals, federated identity credentials, managed identities |
-| 08 | [Key Vault](modules/08-keyvault/) | Secret/key enumeration, policy abuse, suspicious access patterns |
+| 02 | [Token Abuse](modules/02-token-abuse/) | OAuth/refresh token replay, PRT abuse, FOCI token farming, cross-table M365 exfil |
+| 03 | [Logic App Abuse](modules/03-logic-app-abuse/) | RBAC workflow edits, trigger URL harvest, managed identity exfiltration |
+| 04 | [Storage & Key Vault](modules/04-storage-keyvault/) | Shared key abuse, SAS token misuse, blob data exfiltration, Key Vault RBAC abuse |
+| 05 | [Persistence — Identities](modules/05-persistence-identities/) | Service principals, federated identity credentials, managed identities |
+| 06 | [Hardening Capstone](modules/06-hardening-capstone/) | End-to-end hardening review across all attack surfaces |
+| 07 | [Logging Enablement](modules/07-logging-enablement/) | Sentinel table coverage, diagnostic settings, log gap remediation |
 
 ## Deliverables
 
-- **Sentinel Workbook** — Interactive hunting workbook deployed to the customer's Sentinel workspace ([template](sentinel-workbook/))
+- **Sentinel Workbook** — Interactive hunting workbook deployed to the lab Sentinel workspace ([template](sentinel-workbook/))
 - **Huntability App** — Azure Static Web App for self-assessing hunt readiness per attack category ([source](huntability-app/))
-- **CTFd Challenges** — 3–5 flags per module, progressive difficulty, leaderboard-enabled
-- **Emulated Data** — Pre-built JSON log sets per module, importable into Sentinel or queryable offline
+- **CTF Challenges** — Progressive, flag-based challenges per module; each module has a `ctfd-challenges/` folder with a `challenges.md` file
+- **Emulated Data** — Pre-built JSON log sets per module, importable into Sentinel or queryable offline from the `emulated-data/` folder
 
 ## Repository Structure
 
 ```
-cloud-threat-hunting-vbd/
+cloud-threat-hunting/
 ├── modules/
 │   ├── 00-methodology/
+│   │   ├── README.md
+│   │   └── ctfd-challenges/
+│   │       └── challenges.json
 │   ├── 01-phishing/
+│   │   ├── README.md
+│   │   ├── Attack.md
+│   │   ├── Defend.md
+│   │   ├── Mitigate.md
+│   │   ├── ctfd-challenges/
+│   │   │   └── challenges.json
+│   │   └── emulated-data/
+│   │       └── phishing-logs.json
 │   ├── 02-token-abuse/
+│   │   ├── README.md
+│   │   ├── Attack.md
+│   │   ├── Defend.md
+│   │   ├── Mitigate.md
+│   │   ├── ctfd-challenges/
+│   │   │   └── challenges.md
+│   │   └── emulated-data/
+│   │       └── token-abuse-logs.json
 │   ├── 03-logic-app-abuse/
-│   ├── 04-storage/
+│   │   ├── README.md
+│   │   ├── Attack.md
+│   │   ├── Defend.md
+│   │   ├── Mitigate.md
+│   │   └── emulated-data/
+│   │       └── logic-app-logs.json
+│   ├── 04-storage-keyvault/
+│   │   ├── README.md
+│   │   └── emulated-data/
+│   │       └── storage-keyvault-logs.json
 │   ├── 05-persistence-identities/
-│   └── 08-keyvault/
+│   │   ├── README.md
+│   │   └── emulated-data/
+│   │       └── persistence-logs.json
+│   ├── 06-hardening-capstone/
+│   │   └── README.md
+│   └── 07-logging-enablement/
+│       └── README.md
 ├── sentinel-workbook/
+│   ├── README.md
+│   └── workbook-template.json
 ├── huntability-app/
+│   ├── README.md
+│   ├── public/
+│   └── src/
 ├── infrastructure/
+│   ├── lab-environment.bicep
+│   └── Invoke-DataIngestion.ps1
 └── delivery-guides/
+    ├── instructor-guide.md
+    └── student-guide.md
 ```
 
 ## Getting Started
@@ -63,7 +107,7 @@ cloud-threat-hunting-vbd/
 
 2. Ingest emulated data for the target module:
    ```powershell
-   .\infrastructure\Invoke-DataIngestion.ps1 -ModulePath modules/01-phishing/emulated-data -WorkspaceId <id> -WorkspaceKey <key>
+   .\infrastructure\Invoke-DataIngestion.ps1 -ModulePath modules/02-token-abuse/emulated-data -WorkspaceId <id> -WorkspaceKey <key>
    ```
 
 3. Deploy the Sentinel Workbook:
@@ -73,16 +117,7 @@ cloud-threat-hunting-vbd/
      --template-file sentinel-workbook/workbook-template.json
    ```
 
-4. Launch CTFd and import the challenge set for the module.
-
-### Exercise Augmentation
-
-This VBD is designed to follow an Exercise (attack emulation) engagement:
-
-- **Exercise** → "Here's what an attacker did in your environment"
-- **Threat Hunting VBD** → "Here's how you find it yourselves"
-
-Recommended: Exercise Week 1 → VBD Week 2, or VBD delivered 2–4 weeks post-Exercise.
+4. Open the module's `ctfd-challenges/challenges.md` and load the flags into your CTFd instance.
 
 ## Contributing
 
