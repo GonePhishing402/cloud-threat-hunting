@@ -28,7 +28,7 @@ A modular, hands-on threat hunting training built for the Azure stack. Students 
 
 ## Deliverables
 
-- **CTF Challenges** — Progressive, flag-based challenges per module in each module's `ctfd-challenges/` folder (modules 00–02)
+- **CTF Challenges** — Progressive, flag-based challenges per module in each module's `ctfd-challenges/` folder (modules 01–02)
 - **Emulated Data** — Pre-built JSON log sets per module in each module's `emulated-data/` folder (modules 01–05), ingestible into a Sentinel workspace
 - **Sentinel Workbook** — Interactive hunting workbook deployable to any Sentinel workspace ([template](sentinel-workbook/workbook-template.json))
 - **Delivery Guides** — Instructor and student run-of-show documents ([delivery-guides/](delivery-guides/))
@@ -40,8 +40,7 @@ cloud-threat-hunting/
 ├── README.md
 ├── modules/
 │   ├── 00-methodology/
-│   │   ├── README.md, Attack.md, Defend.md, Mitigate.md
-│   │   └── ctfd-challenges/challenges.json
+│   │   └── README.md
 │   ├── 01-phishing/
 │   │   ├── README.md, Attack.md, Defend.md, Mitigate.md
 │   │   ├── ctfd-challenges/challenges.json
