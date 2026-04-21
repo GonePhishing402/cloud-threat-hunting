@@ -112,8 +112,8 @@ Expected output:
 
 | Table | Count |
 |---|---|
-| StorageBlobLogs | 8 |
-| SecurityAlert | 2 |
+| StorageBlobLogs | 20 |
+| SecurityAlert | 4 |
 
 If any count is 0, re-run the corresponding `.ingest` command from Step 4.
 

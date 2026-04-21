@@ -113,8 +113,8 @@ Expected output:
 
 | Table | Count |
 |---|---|
-| AzureDiagnostics | 7 |
-| SecurityAlert | 2 |
+| AzureDiagnostics | 19 |
+| SecurityAlert | 4 |
 
 If any count is 0, re-run the corresponding `.ingest` command from Step 4.
 
