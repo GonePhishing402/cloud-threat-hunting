@@ -19,7 +19,7 @@ NorthStar Technologies' production Key Vault, `kv-northstar-prod`, logs all oper
 Key Vault audit events land in `AzureDiagnostics` with `ResourceType == "VAULTS"`. Before an attacker reads any secrets, they typically call `VaultGet` to confirm the vault is accessible and gather its configuration. Find the identity behind that first call.
 
 **Question:**  
-Query `AzureDiagnostics` for Key Vault events (`ResourceType == "VAULTS"`, `Category == "AuditEvent"`). Find the `identity_claim_upn_s` value — the UPN of the calling identity. Submit it as your flag.
+Query `AzureDiagnostics` for Key Vault events (`ResourceType == "VAULTS"`, `Category == "AuditEvent"`). Find the `identity_claim_upn_s` value — the UPN of the **suspicious** calling identity. Submit it as your flag.
 
 **KQL starting point:**
 ```kql
@@ -29,7 +29,7 @@ AzureDiagnostics
 | summarize by identity_claim_upn_s, CallerIPAddress, identity_claim_oid_g
 ```
 
-**Hint 1** (25 pts): There is only one calling identity across all events. The UPN is a service account in the `northstartech.com` domain.
+**Hint 1** (25 pts): Multiple service accounts appear in the logs alongside legitimate pipeline identities. The suspicious identity authenticates from a non-RFC1918, external IP address — use the `CallerIPAddress` column alongside `identity_claim_upn_s` to identify the attacker. The UPN is a service account in the `northstartech.com` domain.
 
 **Flag:** `FLAG{svc-automation@northstartech.com}`
 
@@ -90,17 +90,17 @@ AzureDiagnostics
 When hunting compromised service principals, the Object ID (OID) is a more reliable identifier than the UPN — it cannot be renamed or aliased. Extracting the OID from the vault audit log gives you a stable pivot point for correlating activity across Azure AD, storage logs, and other telemetry.
 
 **Question:**  
-Extract the `identity_claim_oid_g` (Object ID GUID) of the calling identity from the Key Vault audit events. Submit the full GUID as your flag.
+Extract the `identity_claim_oid_g` (Object ID GUID) of the **attacker's** calling identity from the Key Vault audit events. Submit the full GUID as your flag.
 
 **KQL starting point:**
 ```kql
 AzureDiagnostics
 | where ResourceType == "VAULTS"
 | where Category == "AuditEvent"
-| summarize by identity_claim_oid_g
+| summarize by identity_claim_oid_g, CallerIPAddress, identity_claim_upn_s
 ```
 
-**Hint 1** (50 pts): The Object ID appears in all records. Summarize to de-duplicate. The GUID begins with `3bc4`.
+**Hint 1** (50 pts): Multiple Object IDs are present across service accounts. Correlate to the external attacker IP identified in K-1 to isolate the correct OID. The attacker's GUID begins with `3bc4`.
 
 **Flag:** `FLAG{3bc4dd12-7f9a-4e8b-b0c3-2a6d5f8c9e1b}`
 
