@@ -1,0 +1,66 @@
+﻿{
+    "timestampUtc":  "2026-04-21T23:59:11.0059878Z",
+    "inputs":  {
+                   "markdownPath":  "C:\\Users\\jacobhall\\OneDrive - Microsoft\\Desktop\\Work\\Work\\TH VBD\\cloud-threat-hunting\\modules\\05-persistence-identities\\slides.md",
+                   "templatePath":  "C:\\Users\\jacobhall\\OneDrive - Microsoft\\Desktop\\Work\\Work\\TH VBD\\Agents\\Microsoft Security brand template.potx",
+                   "outputPath":  "C:\\Users\\jacobhall\\OneDrive - Microsoft\\Desktop\\Work\\Work\\TH VBD\\cloud-threat-hunting\\modules\\05-persistence-identities\\slides.pptx"
+               },
+    "template":  {
+                     "title":  "Microsoft Security PowerPoint template",
+                     "subject":  "\u003cEvent name\u003e",
+                     "creator":  "Maria Mei",
+                     "theme":  "Microsoft Security",
+                     "majorFont":  "Segoe UI Semibold",
+                     "minorFont":  "Segoe UI",
+                     "layoutCount":  81,
+                     "sampleLayouts":  [
+                                           {
+                                               "Name":  " Title",
+                                               "PlaceholderCount":  2
+                                           },
+                                           {
+                                               "Name":  "Title square photo placeholder Yellow",
+                                               "PlaceholderCount":  3
+                                           },
+                                           {
+                                               "Name":  "Title square photo placeholder Green",
+                                               "PlaceholderCount":  3
+                                           },
+                                           {
+                                               "Name":  "Title Square Photo placeholder Dk Blu",
+                                               "PlaceholderCount":  3
+                                           },
+                                           {
+                                               "Name":  "Title Square photo placeholder Dk Green",
+                                               "PlaceholderCount":  3
+                                           },
+                                           {
+                                               "Name":  "Title Slide gray",
+                                               "PlaceholderCount":  2
+                                           },
+                                           {
+                                               "Name":  "Agenda 1",
+                                               "PlaceholderCount":  2
+                                           },
+                                           {
+                                               "Name":  "Agenda 2",
+                                               "PlaceholderCount":  9
+                                           }
+                                       ]
+                 },
+    "markdown":  {
+                     "valid":  true,
+                     "sourceSlideHeaders":  15
+                 },
+    "generation":  {
+                       "sourceSlides":  15,
+                       "createdSlides":  23,
+                       "splitSlides":  3
+                   },
+    "validation":  {
+                       "outputValid":  true,
+                       "outputSlideCount":  23,
+                       "noDuplicateSlides":  true,
+                       "slideFingerprintCount":  23
+                   }
+}
