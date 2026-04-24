@@ -92,11 +92,25 @@ AppServiceHTTPLogs
 ### Identify Command Injection Attempts
 
 ```kusto
-// Look for common OS command injection patterns in request URIs
+// Look for common OS command injection patterns in URI stem and query string.
+// ScStatus >= 500 is intentionally excluded — successful injections typically return 200.
+// URL-encoded variants (%24(, %7C, %60) are included to catch evasion attempts.
 AppServiceHTTPLogs
-| where CsUriStem has_any ("$(", "%24(", "`", "%60", ";", "%3B", "&&", "%26%26", "|", "%7C")
-   or CsUriStem has_any ("whoami", "/etc/passwd", "cmd.exe", "powershell", "curl", "wget")
-| project TimeGenerated, CsMethod, CsUriStem, ScStatus, CIp, UserAgent
+| where TimeGenerated > ago(7d)
+| where CsUriStem has_any (
+    "cmd", "exec", "system",
+    "eval", "subprocess",
+    "cmd.exe", "powershell", "whoami",
+    "/bin/sh", "/bin/bash"
+  )
+  or CsUriQuery has_any (
+    "$(", "%24(", "%;", "|", "%7C", "`", "%60",
+    "../", "etc/passwd", "cmd.exe", "whoami",
+    "powershell", "/bin/sh"
+  )
+| project TimeGenerated, CsHost, CsMethod,
+    CsUriStem, CsUriQuery, ScStatus,
+    CIp, UserAgent, TimeTaken
 | order by TimeGenerated desc
 ```
 
@@ -273,20 +287,11 @@ To validate that Defender is working:
 
 ---
 
-## 6. Microsoft Documentation References
+## 6. Microsoft Learn References
 
-- [Enable Diagnostic Logging for Apps in Azure App Service](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs)
-- [Monitor Azure App Service](https://learn.microsoft.com/azure/app-service/monitor-app-service)
-- [App Service Monitoring Data Reference (Log Tables & Metrics)](https://learn.microsoft.com/azure/app-service/monitor-app-service-reference)
-- [Tutorial: Troubleshoot an App Service App with Azure Monitor](https://learn.microsoft.com/azure/app-service/tutorial-troubleshoot-monitor)
-- [Secure Your Azure App Service Deployment](https://learn.microsoft.com/azure/app-service/overview-security)
-- [Send Logs to Azure Monitor (Diagnostic Settings)](https://learn.microsoft.com/azure/app-service/troubleshoot-diagnostic-logs#send-logs-to-azure-monitor)
-- [Managed Identities for App Service](https://learn.microsoft.com/azure/app-service/overview-managed-identity)
-- [KQL Query Samples for AppServiceAppLogs](https://learn.microsoft.com/azure/azure-monitor/reference/queries/appserviceapplogs)
-- [Create Diagnostic Settings in Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings)
-- [Defender for App Service Overview](https://learn.microsoft.com/azure/defender-for-cloud/defender-for-app-service-introduction)
-- [Alerts for Azure App Service (Full Reference)](https://learn.microsoft.com/azure/defender-for-cloud/alerts-azure-app-service)
-- [Enable Defender for App Service](https://learn.microsoft.com/azure/defender-for-cloud/tutorial-enable-app-service-plan)
-- [Manage and Respond to Security Alerts](https://learn.microsoft.com/azure/defender-for-cloud/manage-respond-alerts)
-- [Validate Alerts in Microsoft Defender for Cloud](https://learn.microsoft.com/azure/defender-for-cloud/alert-validation)
-- [Prevent Dangling DNS Entries and Subdomain Takeover](https://learn.microsoft.com/azure/security/fundamentals/subdomain-takeover)
+| # | Reference | What It Covers |
+|---|---|---|
+| 1 | [AppServiceHTTPLogs table schema — Azure Monitor Reference](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/appservicehttplogs) | Authoritative column definitions for `AppServiceHTTPLogs`, including `CsUriStem`, `CsUriQuery`, `ScStatus`, `CIp`, `UserAgent`, and `TimeTaken`. Required for writing accurate KQL against HTTP request logs. |
+| 2 | [Azure App Service monitoring data reference](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service-reference) | Full reference for all App Service resource log categories (`AppServiceHTTPLogs`, `AppServiceConsoleLogs`, `AppServiceAuditLogs`, `AppServiceFileAuditLogs`, `AppServiceIPSecAuditLogs`, `AppServiceAntivirusScanAuditLogs`, etc.), their supported platforms (Windows/Linux/Containers), and the Log Analytics tables they populate. |
+| 3 | [Monitor Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/monitor-app-service) | Explains how to configure diagnostic settings to route App Service logs into a Log Analytics Workspace, recommended KQL query patterns for `AppServiceHTTPLogs` and `AppServiceConsoleLogs`, and how to correlate HTTP 500 errors with console output. |
+| 4 | [Microsoft Defender for App Service — Overview](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-app-service-introduction) | Covers what Defender for App Service detects (MITRE ATT&CK: Pre-attack through C2), how it uses internal App Service logs and infrastructure telemetry, dangling DNS detection, and prerequisites for enabling the plan on a subscription. |
